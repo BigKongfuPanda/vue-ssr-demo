@@ -1,4 +1,4 @@
-const Vue = require('vue');
+const createApp = require('./app');
 const server = require('express')();
 const fs = require('fs');
 const renderer = require('vue-server-renderer').createRenderer({
@@ -6,16 +6,11 @@ const renderer = require('vue-server-renderer').createRenderer({
 });
 
 server.get('*', (req, res) => {
-    const app = new Vue({
-        data: {
-            url: req.url
-        },
-        template: `<div>访问的 URL 是： {{url}}</div>`
-    });
-
     const context = {
-        title: 'vue服务端渲染'
+        title: 'vue服务端渲染',
+        url: req.url
     };
+    const app = createApp(context);
 
     renderer.renderToString(app, context, (err, html) => {
         if (err) {
