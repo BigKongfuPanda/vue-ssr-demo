@@ -1,36 +1,23 @@
 <template>
-  <div>
-      <ul>
-          <li v-for="item in list" :key="item.id">{{item.name}}</li>
-      </ul>
-  </div>
+    <div>
+        {{item.title}}
+    </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-        list: [
-            {
-                id: 1,
-                name: 'tom'
-            },
-            {
-                id: 2,
-                name: 'jack'
-            }
-        ]
-    };
-  },
-  mixins: [],
-  extends: {},
-  props: {},
-  watch: {},
-  components: {},
-  computed: {},
-  created() {},
-  mounted() {},
-  methods: {}
+    asyncData ({store, route}) {
+        // 出发action后, dispatch方法会返回promise
+        return store.dispatch('getItem', route.params.id);
+    },
+    data() {
+        return {};
+    },
+    computed: {
+        item() {
+            return this.$store.state.items[this.$route.params.id];
+        }
+    }
 };
 </script>
 <style lang='scss' scoped>

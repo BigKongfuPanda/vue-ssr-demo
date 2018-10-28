@@ -4,12 +4,15 @@
 - 2. 如何对特定的页面（比如首页）进行服务端渲染，而其他的页面是客户端渲染
 - 3. vue-ssr 服务端渲染过程中的注意点
 - 4. vue-ssr 怎么部署服务
+- 5. 疑问
 
 # 1. vue-ssr 的原理
 
 # 2. 如何对特定的页面（比如首页）进行服务端渲染，而其他的页面是客户端渲染
 
 可以在 context 对象中传入 url ，然后在 entry-server.js 中进行路由的匹配。但是有个问题，url 只有一个，那么要是想对多个页面进行 SSR ，那该怎么处理呢？
+
+另外，在需要服务端渲染的组件中，添加了 `asyncData` 的方法，不需要服务端渲染的页面中可以不用 `asyncData` 方法，那么是否可以根据这一点来判断需要服务端渲染的页面呢？
 
 ```js
 export default context => {
@@ -70,7 +73,24 @@ const bundleRenderer = createBundleRenderer(serverBundle, { /* 选项 */ })
 bundleRenderer.renderToString([context, callback]): ?Promise<string>
 ```
 
+另外，使用 `createBundleRenderer` 方法还有一个好处，在开发环境甚至部署过程中热重载（通过读取更新后的 `bundle`，然后重新创建 `renderer` 实例）；
+
 - 3、在 entry-server.js 中的 context 对象的问题
 
 问题1： 参数 context 会从哪里传过来
 问题2： router.push(context.url) 中 url 是从哪儿传过来的，url 需要是路由的path才行，如果是 req.url 则不行吧
+
+- 4. 使用「SSR + 客户端混合」时，需要了解的一件事是，浏览器可能会更改的一些特殊的 `HTML` 结构。例如，当你在 `Vue` 模板中写入：
+
+```html
+<table>
+  <tr><td>hi</td></tr>
+</table>
+```
+
+浏览器会在 `<table>` 内部自动注入 `<tbody>`，然而，由于 `Vue` 生成的虚拟 `DOM(virtual DOM)` 不包含 `<tbody>`，所以会导致无法匹配。为能够正确匹配，请确保在模板中写入有效的 `HTML`。
+
+
+# 5. 疑问
+
+- 1. 在 **客户端数据预取** 一节中，第一种方式`在路由导航之前解析数据`里面，使用了 `router.beforeResolve`，官方的原因说是：在初始路由 resolve 后执行，以便我们不会二次预取(double-fetch)已有的数据。这里不太理解。

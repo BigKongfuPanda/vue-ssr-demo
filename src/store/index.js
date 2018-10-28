@@ -7,15 +7,15 @@ const findItem = id => {
     const itemArr = [
         {
             id: 1,
-            name: 'tom'
+            title: 'tom'
         },
         {
             id: 2,
-            name: 'jack'
+            title: 'jack'
         },
         {
             id: 3,
-            name: 'zahngsan'
+            title: 'zahngsan'
         }
     ];
     return itemArr.find( item => id === item.id);
