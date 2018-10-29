@@ -1,7 +1,7 @@
 /* 客户端 entry 只需创建应用程序，并且将其挂载到 DOM 中 */
 
 import Vue from 'vue';
-import { createApp } from './app';
+import { createApp } from './main';
 
 // 客户端特定引导逻辑...
 
