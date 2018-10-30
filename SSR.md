@@ -94,3 +94,8 @@ bundleRenderer.renderToString([context, callback]): ?Promise<string>
 # 5. 疑问
 
 - 1. 在 **客户端数据预取** 一节中，第一种方式`在路由导航之前解析数据`里面，使用了 `router.beforeResolve`，官方的原因说是：在初始路由 resolve 后执行，以便我们不会二次预取(double-fetch)已有的数据。这里不太理解。
+
+
+# 参考资料
+
+[基于vue现有项目的服务器端渲染SSR改造](https://www.cnblogs.com/xiaohuochai/p/9158675.html)
