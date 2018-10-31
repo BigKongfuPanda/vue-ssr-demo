@@ -36,7 +36,7 @@ export default context => {
 
                 // Promise 应该 resolve 应用程序实例，以便于它可以渲染
                 resolve(app);
-            }).catch(reject);           
+            }).catch(reject);
         }, reject);
     });
 };

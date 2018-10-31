@@ -22,6 +22,8 @@ Vue.mixin({
 
 const { app, router, store } = createApp();
 
+// 如果该异步数据是全局通用的，可以在entry-client.js方法中直接获取
+
 if (window.__INITIAL_STATE__) {
     store.replaceState(window.__INITIAL_STATE__);
 }
