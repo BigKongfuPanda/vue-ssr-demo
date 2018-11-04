@@ -1,7 +1,9 @@
-const server = require('express')();
+const express = require('express');
 const fs = require('fs');
+const path = require('path');
 const {createBundleRenderer} = require('vue-server-renderer');
 const resolve = file => path.resolve(__dirname, file);
+const server = express();
 
 const serverBundle = require('./dist/vue-ssr-server-bundle.json');
 const clientManifest = require('./dist//vue-ssr-client-manifest.json');
@@ -13,7 +15,7 @@ const renderer = createBundleRenderer(serverBundle, {
     basedir: resolve('./dist')
 })
 
-app.use(express.static(path.join(__dirname, 'dist')));
+server.use(express.static(path.join(__dirname, 'dist')));
 
 server.get('*', (req, res) => {
     const context = {
