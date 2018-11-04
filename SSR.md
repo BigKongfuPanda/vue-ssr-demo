@@ -43,7 +43,7 @@ export default context => {
 
 # 3. 注意点
 
-- 1、 页面模板中，必须有 `<!--vue-ssr-outlet-->` 的注释，不然会报错。
+## 1、 页面模板中，必须有 `<!--vue-ssr-outlet-->` 的注释，不然会报错。
 
 ```html
 <!DOCTYPE html>
@@ -55,7 +55,7 @@ export default context => {
 </html>
 ```
 
-- 2、 `createRenderer` 和 `createBundleRenderer` 方法的区别
+## 2、 `createRenderer` 和 `createBundleRenderer` 方法的区别
 
 `createRenderer` 和 `createBundleRenderer` 都是 `vue-server-renderer` 库里面的方法。
 
@@ -77,12 +77,12 @@ bundleRenderer.renderToString([context, callback]): ?Promise<string>
 
 另外，使用 `createBundleRenderer` 方法还有一个好处，在开发环境甚至部署过程中热重载（通过读取更新后的 `bundle`，然后重新创建 `renderer` 实例）；
 
-- 3、在 entry-server.js 中的 context 对象的问题
+## 3、在 entry-server.js 中的 context 对象的问题
 
 问题1： 参数 context 会从哪里传过来
 问题2： router.push(context.url) 中 url 是从哪儿传过来的，url 需要是路由的path才行，如果是 req.url 则不行吧
 
-- 4. 使用「SSR + 客户端混合」时，需要了解的一件事是，浏览器可能会更改的一些特殊的 `HTML` 结构。例如，当你在 `Vue` 模板中写入：
+## 4. 使用「SSR + 客户端混合」时，需要了解的一件事是，浏览器可能会更改的一些特殊的 `HTML` 结构。例如，当你在 `Vue` 模板中写入：
 
 ```html
 <table>
@@ -92,6 +92,17 @@ bundleRenderer.renderToString([context, callback]): ?Promise<string>
 
 浏览器会在 `<table>` 内部自动注入 `<tbody>`，然而，由于 `Vue` 生成的虚拟 `DOM(virtual DOM)` 不包含 `<tbody>`，所以会导致无法匹配。为能够正确匹配，请确保在模板中写入有效的 `HTML`。
 
+## 5. 撰写服务端和客户端通用的代码
+
+`vue` 的生命周期钩子函数中， 只有 `beforeCreate` 和  `created` 会在服务器端渲染 (`SSR`) 过程中被调用，这就是说在这两个钩子函数中的代码以及除了 `vue` 生命周期钩子函数的全局代码，都将会在服务端和客户端两套环境下执行。如果在两套环境的代码中加入具有副作用的代码或访问特定平台的 `API` ，将出现各种问题。比如服务端没有 `window` 、 `document` 对象， 如果加了对这个对象的引用和操作，将在服务端引起报错中断。
+
+因此，总结起来，最容易犯的错误就是不判断环境就去使用 `window` 、 `document` 对象。
+
+在 `beforeCreate` ，`created` 生命周期以及全局的执行环境中调用特定的 `API` 前需要判断执行环境；
+
+## 6. 异步数据的预获取
+
+在服务端渲染的时候，需要提前获取匹配路由中所有组件中的异步数据，获取异步数据的方法不能够放到组件的生命周期中，因此自定义了一个获取数据的方法 asyncData。并且，所有的数据都放在 vuex 中来统一管理。
 
 # 5. 疑问
 
